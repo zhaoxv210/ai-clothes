@@ -1,18 +1,9 @@
-import { Router, Switch, Route } from 'wouter'
+import { Router, Switch, Route, Link, useLocation } from 'wouter'
 import { useState, useEffect, useCallback } from 'react'
-import { Sidebar } from '@/components/layout/sidebar'
-import { Header } from '@/components/layout/header'
-import { useAppStore } from '@/store/use-store'
-import { cn } from '@/lib/utils'
-import { DashboardPage } from '@/components/pages/dashboard-page'
+import { HomePage } from '@/components/pages/home-page'
 import { ClosetPage } from '@/components/pages/closet-page'
 import { ClosetDetailPage } from '@/components/pages/closet-detail-page'
 import { ClosetNewPage } from '@/components/pages/closet-new-page'
-import { OutfitsPage } from '@/components/pages/outfits-page'
-import { OutfitDetailPage } from '@/components/pages/outfit-detail-page'
-import { OutfitNewPage } from '@/components/pages/outfit-new-page'
-import { TodayPage } from '@/components/pages/today-page'
-import { CalendarPage } from '@/components/pages/calendar-page'
 
 const hashLocation = () => {
   return window.location.hash.replace(/^#/, '') || '/'
@@ -35,34 +26,50 @@ const useHashLocation: () => [string, (to: string) => void] = () => {
   return [loc, navigate]
 }
 
-export default function App() {
-  const sidebarOpen = useAppStore((s) => s.sidebarOpen)
+function TabBar() {
+  const [pathname] = useLocation()
+  return (
+    <div className="fixed bottom-0 left-0 right-0 h-14 bg-card border-t border-border flex items-center justify-around z-50">
+      <Link href="/">
+        <div
+          className={`flex flex-col items-center gap-0.5 cursor-pointer px-6 py-1 transition-colors ${
+            pathname === '/' ? 'text-foreground' : 'text-muted-foreground'
+          }`}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+            <path d="M2 17l10 5 10-5" />
+            <path d="M2 12l10 5 10-5" />
+          </svg>
+        </div>
+      </Link>
+      <Link href="/closet">
+        <div
+          className={`flex flex-col items-center gap-0.5 cursor-pointer px-6 py-1 transition-colors ${
+            pathname === '/closet' ? 'text-foreground' : 'text-muted-foreground'
+          }`}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </div>
+      </Link>
+    </div>
+  )
+}
 
+export default function App() {
   return (
     <Router hook={useHashLocation}>
-      <div className="flex min-h-screen">
-        <Sidebar open={sidebarOpen} />
-        <div
-          className={cn(
-            'flex-1 flex flex-col transition-all duration-300',
-            sidebarOpen ? 'ml-56' : 'ml-0'
-          )}
-        >
-          <Header />
-          <main className="flex-1 p-6">
-            <Switch>
-              <Route path="/" component={DashboardPage} />
-              <Route path="/closet" component={ClosetPage} />
-              <Route path="/closet/new" component={ClosetNewPage} />
-              <Route path="/closet/:id" component={ClosetDetailPage} />
-              <Route path="/outfits" component={OutfitsPage} />
-              <Route path="/outfits/new" component={OutfitNewPage} />
-              <Route path="/outfits/:id" component={OutfitDetailPage} />
-              <Route path="/today" component={TodayPage} />
-              <Route path="/calendar" component={CalendarPage} />
-            </Switch>
-          </main>
-        </div>
+      <div className="min-h-screen bg-background text-foreground pb-14">
+        <Switch>
+          <Route path="/" component={HomePage} />
+          <Route path="/closet" component={ClosetPage} />
+          <Route path="/closet/new" component={ClosetNewPage} />
+          <Route path="/closet/:id" component={ClosetDetailPage} />
+        </Switch>
+        <TabBar />
       </div>
     </Router>
   )

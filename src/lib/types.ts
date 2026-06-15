@@ -12,7 +12,6 @@ export interface ClothingItem {
   colors: string[]
   season: Season[]
   brand: string
-  style: Style[]
   favorite: boolean
   tags: string[]
   timesWorn: number

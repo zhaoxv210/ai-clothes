@@ -1,6 +1,6 @@
 
 import { useState, useRef } from 'react'
-import { useNavigate } from '@/navigate'
+import { useLocation } from 'wouter'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -17,16 +17,14 @@ import { extractColors } from '@/lib/color-utils'
 import {
   CATEGORY_LABELS,
   SEASON_LABELS,
-  STYLE_LABELS,
   type Category,
   type Season,
-  type Style,
 } from '@/lib/types'
 import { Upload, Camera, Loader2, CheckCircle2 } from 'lucide-react'
 import { removeBackground } from '@imgly/background-removal'
 
 export function ClosetNewPage() {
-  const navigate = useNavigate()
+  const [, navigate] = useLocation()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [step, setStep] = useState<'select' | 'processing' | 'info'>('select')
@@ -38,7 +36,7 @@ export function ClosetNewPage() {
   const [name, setName] = useState('')
   const [category, setCategory] = useState<Category | ''>('')
   const [season, setSeason] = useState<Season[]>([])
-  const [style, setStyle] = useState<Style[]>([])
+
   const [brand, setBrand] = useState('')
 
   const handleFile = async (file: File) => {
@@ -96,10 +94,6 @@ export function ClosetNewPage() {
     setSeason((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]))
   }
 
-  const toggleStyle = (s: Style) => {
-    setStyle((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]))
-  }
-
   const handleSave = async () => {
     if (!category || !name.trim()) return
     const finalImage = processedImage || originalImage
@@ -112,7 +106,6 @@ export function ClosetNewPage() {
       colors,
       season,
       brand,
-      style,
       favorite: false,
       tags: [],
     })
@@ -243,22 +236,6 @@ export function ClosetNewPage() {
                     onClick={() => toggleSeason(s)}
                   >
                     {SEASON_LABELS[s]}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">风格（可多选）</label>
-              <div className="flex gap-2 mt-1 flex-wrap">
-                {(Object.keys(STYLE_LABELS) as Style[]).map((s) => (
-                  <Badge
-                    key={s}
-                    variant={style.includes(s) ? 'default' : 'outline'}
-                    className="cursor-pointer"
-                    onClick={() => toggleStyle(s)}
-                  >
-                    {STYLE_LABELS[s]}
                   </Badge>
                 ))}
               </div>

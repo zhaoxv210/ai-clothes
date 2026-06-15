@@ -8,7 +8,7 @@ export class WardrobeDB extends Dexie {
   constructor() {
     super('wardrobeDB')
     this.version(1).stores({
-      clothingItems: 'id, category, season, style, favorite, createdAt',
+      clothingItems: 'id, category, season, favorite, createdAt',
       outfits: 'id, tags, rating, createdAt',
     })
   }
